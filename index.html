@@ -1,956 +1,1134 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width,
-             initial-scale=1.0,
-             maximum-scale=1.0,
-             user-scalable=no,
-             viewport-fit=cover">
-
-  <!-- iOS Web App -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ปฏิทิน">
-
-  <!-- ไอคอนตอนเพิ่มลงหน้าจอหลัก iOS -->
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
-
-  <!-- Browser Favicon -->
-  <link
-    rel="icon"
-    type="image/webp"
-    href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
-
-  <meta name="theme-color" content="#ffffff">
-
-  <title>ปฏิทิน</title>
-
-  <style>
-    :root {
-      --ios-red: #ff3b30;
-      --ios-gray: #8e8e93;
-      --ios-bg: #ffffff;
-      --nav-bg: #f9f9f9;
-      --safe-top: env(safe-area-inset-top);
-      --safe-bottom: env(safe-area-inset-bottom);
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #fff;
-    }
-
-    body {
-      position: relative;
-      padding-top: var(--safe-top);
-      padding-bottom: var(--safe-bottom);
-    }
-
-    /* =========================
-       CALENDAR
-       ========================= */
-
-    .app-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: calc(60px + var(--safe-top));
-
-      padding-top: var(--safe-top);
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-
-      border-bottom: 0.5px solid rgba(0,0,0,0.1);
-      z-index: 100;
-    }
-
-    .top-icons {
-      height: 60px;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 0 16px;
-      gap: 20px;
-    }
-
-    .icon-svg {
-      width: 24px;
-      height: 24px;
-      fill: var(--ios-red);
-    }
-
-    .app-content {
-      position: absolute;
-      top: calc(60px + var(--safe-top));
-      bottom: calc(85px + var(--safe-bottom));
-      left: 0;
-      right: 0;
-
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-
-      display: none;
-      padding-bottom: 30px;
-    }
-
-    .active-page {
-      display: block;
-      animation: fadeIn .25s ease;
-    }
-
-    .year-title {
-      font-size: 34px;
-      font-weight: 800;
-      color: #000;
-      padding: 18px 16px 20px;
-      letter-spacing: -0.5px;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 30px;
-      padding: 10px 16px;
-    }
-
-    @media (min-width: 400px) {
-      .calendar-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 768px) {
-      .calendar-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .month-box {
-      text-align: left;
-    }
-
-    .month-name {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #000;
-    }
-
-    .month-name.current-month {
-      color: var(--ios-red);
-    }
-
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
-      text-align: center;
-      font-size: 13px;
-    }
-
-    .day {
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .today-circle {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: var(--ios-red);
-      color: white !important;
-      font-weight: 600;
-
-      box-shadow:
-        0 2px 5px rgba(255,59,48,.3);
-    }
-
-    /* =========================
-       BOTTOM NAV
-       ========================= */
-
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-
-      width: 100%;
-      height: calc(85px + var(--safe-bottom));
-
-      padding-bottom: var(--safe-bottom);
-
-      background: rgba(249,249,249,.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+    <meta charset="UTF-8">
 
-      border-top: .5px solid #c6c6c8;
-
-      display: flex;
-      justify-content: space-around;
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no,
+                   viewport-fit=cover">
 
-      z-index: 200;
-    }
+    <!-- iOS Home Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ปฏิทิน">
 
-    .nav-item {
-      flex: 1;
+    <!-- App Icon -->
+    <link rel="apple-touch-icon"
+          href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    <link rel="icon"
+          type="image/webp"
+          href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
 
-      color: var(--ios-gray);
-      font-size: 10px;
-      cursor: pointer;
-    }
+    <meta name="theme-color" content="#ffffff">
 
-    .nav-item.active {
-      color: var(--ios-red);
-    }
+    <title>ปฏิทิน</title>
 
-    .nav-item span {
-      margin-top: 4px;
-      font-weight: 500;
-    }
+    <style>
+        :root {
+            --red: #ff3b30;
+            --gray: #8e8e93;
+            --bg: #ffffff;
+            --nav: #f9f9f9;
+        }
 
-    /* =========================
-       WEB VIEW
-       ========================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
 
-    #webPage {
-      position: fixed;
-      inset: 0;
+            -webkit-user-select: none;
+            user-select: none;
 
-      width: 100%;
-      height: 100%;
+            -webkit-touch-callout: none;
 
-      display: none;
+            -webkit-tap-highlight-color: transparent;
 
-      background: #fff;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+        }
 
-      z-index: 9999;
-    }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg);
+        }
 
-    #webFrame {
-      width: 100%;
-      height: 100%;
+        body {
+            position: relative;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
 
-      border: 0;
-      display: block;
+            touch-action: manipulation;
+        }
 
-      background: #fff;
-    }
+        /* =========================================
+           HEADER
+        ========================================= */
 
-    /* ปุ่มกลับปฏิทิน */
-    #backButton {
-      position: fixed;
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
 
-      top: calc(10px + var(--safe-top));
-      left: 10px;
+            width: 100%;
 
-      z-index: 10001;
+            height: calc(60px + env(safe-area-inset-top));
 
-      display: none;
+            padding-top: env(safe-area-inset-top);
 
-      width: 42px;
-      height: 42px;
+            background: rgba(255,255,255,0.95);
 
-      border: none;
-      border-radius: 50%;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
 
-      background: rgba(0,0,0,.65);
-      color: white;
+            border-bottom: 0.5px solid rgba(0,0,0,0.1);
 
-      font-size: 24px;
-      line-height: 42px;
+            z-index: 100;
+        }
 
-      text-align: center;
+        .top-icons {
+            height: 60px;
 
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
 
-    /* =========================
-       GESTURE INDICATOR
-       ========================= */
+            padding: 0 18px;
 
-    #gestureMessage {
-      position: fixed;
+            gap: 20px;
+        }
 
-      left: 50%;
-      bottom: 110px;
+        .icon-svg {
+            width: 24px;
+            height: 24px;
 
-      transform: translateX(-50%);
+            fill: var(--red);
+        }
 
-      background: rgba(0,0,0,.8);
-      color: white;
+        /* =========================================
+           CALENDAR
+        ========================================= */
 
-      padding: 10px 16px;
+        .app-content {
+            position: absolute;
 
-      border-radius: 20px;
+            top: calc(60px + env(safe-area-inset-top));
 
-      font-size: 12px;
-      font-weight: 600;
+            bottom: calc(85px + env(safe-area-inset-bottom));
 
-      opacity: 0;
-      pointer-events: none;
+            left: 0;
+            right: 0;
 
-      transition: opacity .25s;
+            overflow-y: auto;
 
-      z-index: 10000;
-    }
+            -webkit-overflow-scrolling: touch;
 
-    #gestureMessage.show {
-      opacity: 1;
-    }
+            padding-bottom: 30px;
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
+            display: none;
+        }
 
-      to {
-        opacity: 1;
-      }
-    }
-  </style>
+        .active-page {
+            display: block;
+        }
+
+        .year-title {
+            font-size: 34px;
+            font-weight: 800;
+
+            color: #000;
+
+            padding:
+                15px
+                16px
+                20px;
+
+            letter-spacing: -0.5px;
+        }
+
+        .calendar-grid {
+            display: grid;
+
+            grid-template-columns: repeat(1, 1fr);
+
+            gap: 30px;
+
+            padding: 10px 16px 40px;
+        }
+
+        @media (min-width: 400px) {
+            .calendar-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .month-box {
+            margin-bottom: 10px;
+        }
+
+        .month-name {
+            font-size: 18px;
+            font-weight: 700;
+
+            margin-bottom: 10px;
+
+            color: #000;
+        }
+
+        .month-name.current-month {
+            color: var(--red);
+        }
+
+        .days-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(7, 1fr);
+
+            gap: 2px;
+
+            font-size: 13px;
+
+            text-align: center;
+        }
+
+        .day {
+            height: 32px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: #333;
+
+            font-weight: 500;
+        }
+
+        .today-circle {
+            width: 28px;
+            height: 28px;
+
+            border-radius: 50%;
+
+            background: var(--red);
+
+            color: white !important;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 2px 6px
+                rgba(255,59,48,0.35);
+        }
+
+        /* =========================================
+           TODAY PAGE
+        ========================================= */
+
+        .today-content {
+            text-align: center;
+
+            color: #999;
+
+            margin-top: 70px;
+
+            padding: 20px;
+        }
+
+        .today-icon {
+            font-size: 60px;
+
+            margin-bottom: 20px;
+        }
+
+        /* =========================================
+           BOTTOM NAV
+        ========================================= */
+
+        .bottom-nav {
+            position: fixed;
+
+            left: 0;
+            bottom: 0;
+
+            width: 100%;
+
+            height:
+                calc(85px + env(safe-area-inset-bottom));
+
+            padding-bottom:
+                env(safe-area-inset-bottom);
+
+            background:
+                rgba(249,249,249,0.96);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            border-top:
+                0.5px solid #c6c6c8;
+
+            display: flex;
+
+            z-index: 200;
+        }
+
+        .nav-item {
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--gray);
+
+            font-size: 10px;
+
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--red);
+        }
+
+        .nav-item span {
+            margin-top: 4px;
+
+            font-weight: 500;
+        }
+
+        /* =========================================
+           GESTURE STATUS
+        ========================================= */
+
+        #gestureStatus {
+            position: fixed;
+
+            left: 50%;
+
+            bottom:
+                calc(100px + env(safe-area-inset-bottom));
+
+            transform:
+                translateX(-50%)
+                scale(0.95);
+
+            background:
+                rgba(0,0,0,0.85);
+
+            color: white;
+
+            padding: 10px 16px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease;
+
+            z-index: 9999;
+
+            white-space: nowrap;
+        }
+
+        #gestureStatus.show {
+            opacity: 1;
+
+            transform:
+                translateX(-50%)
+                scale(1);
+        }
+
+        /* =========================================
+           LOADING
+        ========================================= */
+
+        #loading {
+            position: fixed;
+
+            inset: 0;
+
+            background: #fff;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-direction: column;
+
+            z-index: 10000;
+        }
+
+        #loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+
+            border:
+                3px solid #ddd;
+
+            border-top-color:
+                var(--red);
+
+            border-radius: 50%;
+
+            animation:
+                spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 15px;
+
+            font-size: 13px;
+
+            color: #666;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       CALENDAR HEADER
-       ========================= -->
+    <!-- =========================================
+         HEADER
+    ========================================= -->
 
-  <div class="app-header">
-    <div class="top-icons">
+    <div class="app-header">
 
-      <!-- Search -->
-      <svg
-        class="icon-svg"
-        viewBox="0 0 24 24">
-        <path d="
-          M15.5 14h-.79
-          l-.28-.27
-          A6.471 6.471 0 0 0 16 9.5
-          A6.5 6.5 0 1 0 9.5 16
-          c1.61 0 3.09-.59 4.23-1.57
-          l.27.28v.79
-          l5 4.99
-          L20.49 19
-          l-4.99-5z
-          M9.5 14
-          C7.01 14 5 11.99 5 9.5
-          S7.01 5 9.5 5
-          14 7.01 14 9.5
-          11.99 14 9.5 14z"/>
-      </svg>
+        <div class="top-icons">
 
-      <!-- Plus -->
-      <svg
-        class="icon-svg"
-        viewBox="0 0 24 24">
-        <path d="
-          M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
+            <svg
+                class="icon-svg"
+                viewBox="0 0 24 24">
+
+                <path
+                    d="
+                    M15.5 14h-.79
+                    l-.28-.27
+                    A6.471 6.471 0 0 0 16 9.5
+                    A6.5 6.5 0 1 0 9.5 16
+                    c1.61 0 3.09-.59 4.23-1.57
+                    l.27.28v.79
+                    l5 4.99L20.49 19l-4.99-5z
+                    M9.5 14
+                    C7.01 14 5 11.99 5 9.5
+                    S7.01 5 9.5 5
+                    S14 7.01 14 9.5
+                    S11.99 14 9.5 14z"
+                />
+
+            </svg>
+
+            <svg
+                class="icon-svg"
+                viewBox="0 0 24 24">
+
+                <path
+                    d="
+                    M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                />
+
+            </svg>
+
+        </div>
 
     </div>
-  </div>
 
 
-  <!-- =========================
-       CALENDAR PAGE
-       ========================= -->
-
-  <div
-    id="page-calendar"
-    class="app-content active-page">
+    <!-- =========================================
+         CALENDAR PAGE
+    ========================================= -->
 
     <div
-      class="year-title"
-      id="yearTxt">
-      พ.ศ. 2569
+        id="page-calendar"
+        class="app-content active-page">
+
+        <div
+            class="year-title"
+            id="yearTxt">
+            พ.ศ. 2569
+        </div>
+
+        <div
+            class="calendar-grid"
+            id="mainGrid">
+        </div>
+
     </div>
+
+
+    <!-- =========================================
+         TODAY PAGE
+    ========================================= -->
 
     <div
-      class="calendar-grid"
-      id="mainGrid">
-    </div>
+        id="page-today"
+        class="app-content">
 
-  </div>
+        <div class="year-title">
+            วันนี้
+        </div>
 
+        <div class="today-content">
 
-  <!-- =========================
-       TODAY PAGE
-       ========================= -->
+            <div class="today-icon">
+                📅
+            </div>
 
-  <div
-    id="page-today"
-    class="app-content">
+            <div>
+                ไม่มีกิจกรรมสำหรับวันนี้
+            </div>
 
-    <div class="year-title">
-      วันนี้
-    </div>
-
-    <div
-      style="
-        padding:20px;
-        text-align:center;
-        color:#999;
-        margin-top:50px;
-      ">
-
-      <div
-        style="
-          font-size:60px;
-          margin-bottom:20px;
-        ">
-        📅
-      </div>
-
-      ไม่มีกิจกรรมสำหรับวันนี้
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       BOTTOM NAV
-       ========================= -->
-
-  <nav class="bottom-nav">
-
-    <div
-      class="nav-item"
-      id="btn-today"
-      onclick="switchTab('today')">
-
-      <svg
-        style="
-          width:24px;
-          height:24px;
-          fill:currentColor;
-        "
-        viewBox="0 0 24 24">
-
-        <path d="
-          M19 3h-1V1h-2v2H8V1H6v2H5
-          c-1.11 0-1.99.9-1.99 2L3 19
-          c0 1.1.89 2 2 2h14
-          c1.1 0 2-.9 2-2V5
-          c0-1.1-.89-2-2-2zm0 16H5V8h14v11z
-          M7 10h5v5H7z"/>
-
-      </svg>
-
-      <span>วันนี้</span>
+        </div>
 
     </div>
 
 
-    <div
-      class="nav-item active"
-      id="btn-calendar"
-      onclick="switchTab('calendar')">
+    <!-- =========================================
+         BOTTOM NAV
+    ========================================= -->
 
-      <svg
-        style="
-          width:24px;
-          height:24px;
-          fill:currentColor;
-        "
-        viewBox="0 0 24 24">
+    <nav class="bottom-nav">
 
-        <path d="
-          M20 3h-1V1h-2v2H7V1H5v2H4
-          c-1.1 0-2 .9-2 2v16
-          c0 1.1.9 2 2 2h16
-          c1.1 0 2-.9 2-2V5
-          c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/>
+        <div
+            class="nav-item"
+            id="btn-today"
+            onclick="switchTab('today')">
 
-      </svg>
+            <svg
+                style="
+                    width:24px;
+                    height:24px;
+                    fill:currentColor;
+                "
+                viewBox="0 0 24 24">
 
-      <span>ปฏิทิน</span>
+                <path
+                    d="
+                    M19 3h-1V1h-2v2H8V1H6v2H5
+                    c-1.11 0-1.99.9-1.99 2L3 19
+                    c0 1.1.89 2 2 2h14
+                    c1.1 0 2-.9 2-2V5
+                    c0-1.1-.89-2-2-2zm0 16H5V8h14v11z
+                    M7 10h5v5H7z"
+                />
+
+            </svg>
+
+            <span>
+                วันนี้
+            </span>
+
+        </div>
+
+
+        <div
+            class="nav-item active"
+            id="btn-calendar"
+            onclick="switchTab('calendar')">
+
+            <svg
+                style="
+                    width:24px;
+                    height:24px;
+                    fill:currentColor;
+                "
+                viewBox="0 0 24 24">
+
+                <path
+                    d="
+                    M20 3h-1V1h-2v2H7V1H5v2H4
+                    c-1.1 0-2 .9-2 2v16
+                    c0 1.1.9 2 2 2h16
+                    c1.1 0 2-.9 2-2V5
+                    c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"
+                />
+
+            </svg>
+
+            <span>
+                ปฏิทิน
+            </span>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         GESTURE MESSAGE
+    ========================================= -->
+
+    <div id="gestureStatus">
+        กำลังเปิด...
+    </div>
+
+
+    <!-- =========================================
+         LOADING
+    ========================================= -->
+
+    <div id="loading">
+
+        <div class="spinner"></div>
+
+        <div class="loading-text">
+            กำลังเปิดหน้าเว็บ...
+        </div>
 
     </div>
 
-  </nav>
+
+    <script>
+
+        /* =========================================
+           WEB TARGET
+        ========================================= */
+
+        const TARGET_URL =
+            "https://viper-x.mrpcs.online";
 
 
-  <!-- =========================
-       EXTERNAL WEBSITE
-       ========================= -->
+        /* =========================================
+           TAB SYSTEM
+        ========================================= */
 
-  <div id="webPage">
+        function switchTab(tab) {
 
-    <button
-      id="backButton"
-      onclick="closeWebsite()">
-      ‹
-    </button>
+            document
+                .querySelectorAll(".app-content")
+                .forEach(page => {
 
-    <iframe
-      id="webFrame"
-      src="about:blank"
-      title="VaiperX Website"
-      allow="fullscreen">
-    </iframe>
+                    page.classList.remove(
+                        "active-page"
+                    );
 
-  </div>
+                });
 
+            document
+                .querySelectorAll(".nav-item")
+                .forEach(button => {
 
-  <!-- Gesture Message -->
+                    button.classList.remove(
+                        "active"
+                    );
 
-  <div id="gestureMessage">
-    กำลังเปิดเว็บไซต์...
-  </div>
+                });
 
+            const page =
+                document.getElementById(
+                    "page-" + tab
+                );
 
-  <script>
+            const button =
+                document.getElementById(
+                    "btn-" + tab
+                );
 
-    /* ==========================================
-       SETTINGS
-       ========================================== */
+            if (page) {
+                page.classList.add(
+                    "active-page"
+                );
+            }
 
-    const TARGET_URL =
-      "https://viper-x.mrpcs.online";
-
-
-    /* ==========================================
-       CALENDAR
-       ========================================== */
-
-    const months = [
-      "มกราคม",
-      "กุมภาพันธ์",
-      "มีนาคม",
-      "เมษายน",
-      "พฤษภาคม",
-      "มิถุนายน",
-      "กรกฎาคม",
-      "สิงหาคม",
-      "กันยายน",
-      "ตุลาคม",
-      "พฤศจิกายน",
-      "ธันวาคม"
-    ];
-
-
-    function switchTab(tab) {
-
-      document
-        .querySelectorAll(".app-content")
-        .forEach(page => {
-          page.classList.remove("active-page");
-        });
-
-      document
-        .querySelectorAll(".nav-item")
-        .forEach(button => {
-          button.classList.remove("active");
-        });
-
-      document
-        .getElementById("page-" + tab)
-        .classList.add("active-page");
-
-      document
-        .getElementById("btn-" + tab)
-        .classList.add("active");
-    }
-
-
-    function renderCalendar() {
-
-      const now = new Date();
-
-      const year =
-        now.getFullYear();
-
-      const yearBE =
-        year + 543;
-
-      document
-        .getElementById("yearTxt")
-        .innerText =
-        "พ.ศ. " + yearBE;
-
-
-      const grid =
-        document.getElementById("mainGrid");
-
-      grid.innerHTML = "";
-
-
-      for (
-        let month = 0;
-        month < 12;
-        month++
-      ) {
-
-        const box =
-          document.createElement("div");
-
-        box.className =
-          "month-box";
-
-
-        const title =
-          document.createElement("div");
-
-        title.className =
-          "month-name " +
-          (
-            month === now.getMonth()
-              ? "current-month"
-              : ""
-          );
-
-        title.innerText =
-          months[month];
-
-        box.appendChild(title);
-
-
-        const days =
-          document.createElement("div");
-
-        days.className =
-          "days-grid";
-
-
-        const firstDay =
-          new Date(
-            year,
-            month,
-            1
-          ).getDay();
-
-
-        const totalDays =
-          new Date(
-            year,
-            month + 1,
-            0
-          ).getDate();
-
-
-        for (
-          let i = 0;
-          i < firstDay;
-          i++
-        ) {
-
-          days.appendChild(
-            document.createElement("div")
-          );
+            if (button) {
+                button.classList.add(
+                    "active"
+                );
+            }
 
         }
 
 
-        for (
-          let day = 1;
-          day <= totalDays;
-          day++
-        ) {
-
-          const dayElement =
-            document.createElement("div");
-
-          dayElement.className =
-            "day";
-
-
-          if (
-            day === now.getDate() &&
-            month === now.getMonth()
-          ) {
-
-            dayElement.innerHTML =
-              `<span class="today-circle">
-                ${day}
-              </span>`;
-
-          } else {
-
-            dayElement.innerText =
-              day;
-
-          }
-
-
-          days.appendChild(dayElement);
-
-        }
-
-
-        box.appendChild(days);
-
-        grid.appendChild(box);
-
-      }
-
-    }
-
-
-    /* ==========================================
-       OPEN WEBSITE
-       ========================================== */
-
-    function openWebsite() {
-
-      const message =
-        document.getElementById(
-          "gestureMessage"
-        );
-
-      message.classList.add("show");
-
-
-      setTimeout(() => {
-
-        message.classList.remove("show");
-
-      }, 1000);
-
-
-      const webPage =
-        document.getElementById(
-          "webPage"
-        );
-
-      const frame =
-        document.getElementById(
-          "webFrame"
-        );
-
-
-      /*
-       * ใช้ URL เดิมทุกครั้ง
-       *
-       * หมายเหตุ:
-       * Cookie / LocalStorage ของเว็บไซต์
-       * จะถูกจัดการโดย Safari และเว็บปลายทาง
-       */
-
-      if (
-        frame.src === "about:blank"
-      ) {
-
-        frame.src =
-          TARGET_URL;
-
-      }
-
-
-      webPage.style.display =
-        "block";
-
-
-      document.getElementById(
-        "backButton"
-      ).style.display =
-        "block";
-
-    }
-
-
-    /* ==========================================
-       CLOSE WEBSITE
-       ========================================== */
-
-    function closeWebsite() {
-
-      document.getElementById(
-        "webPage"
-      ).style.display =
-        "none";
-
-      document.getElementById(
-        "backButton"
-      ).style.display =
-        "none";
-
-    }
-
-
-    /* ==========================================
-       3 FINGER + 2 TAPS
-       ========================================== */
-
-    let tapCount = 0;
-    let lastTapTime = 0;
-
-    const TAP_INTERVAL = 600;
-
-
-    document.addEventListener(
-      "touchstart",
-      function(event) {
-
-        /*
-         * ต้องมีนิ้วแตะหน้าจอพร้อมกัน 3 นิ้ว
-         */
-
-        if (
-          event.touches.length !== 3
-        ) {
-          return;
-        }
-
-
-        const now =
-          Date.now();
-
-
-        /*
-         * ถ้าแตะครั้งที่ 2
-         * ภายในเวลาที่กำหนด
-         */
-
-        if (
-          now - lastTapTime <
-          TAP_INTERVAL
-        ) {
-
-          tapCount++;
-
-        } else {
-
-          tapCount = 1;
-
-        }
-
-
-        lastTapTime =
-          now;
-
-
-        /*
-         * ครบ 2 ครั้ง
-         */
-
-        if (
-          tapCount === 2
-        ) {
-
-          tapCount = 0;
-
-          openWebsite();
-
-
-          /*
-           * Haptic Feedback
-           * หากอุปกรณ์รองรับ
-           */
-
-          if (
-            navigator.vibrate
-          ) {
-
-            navigator.vibrate(
-              [40, 40, 40]
-            );
-
-          }
-
-        }
-
-      },
-      {
-        passive: true
-      }
-    );
-
-
-    /* ==========================================
-       RESET GESTURE
-       ========================================== */
-
-    document.addEventListener(
-      "touchend",
-      function() {
-
-        setTimeout(
-          function() {
-
-            if (
-              Date.now() -
-              lastTapTime >
-              TAP_INTERVAL
+        /* =========================================
+           CALENDAR
+        ========================================= */
+
+        const months = [
+            "มกราคม",
+            "กุมภาพันธ์",
+            "มีนาคม",
+            "เมษายน",
+            "พฤษภาคม",
+            "มิถุนายน",
+            "กรกฎาคม",
+            "สิงหาคม",
+            "กันยายน",
+            "ตุลาคม",
+            "พฤศจิกายน",
+            "ธันวาคม"
+        ];
+
+
+        function renderCalendar() {
+
+            const now =
+                new Date();
+
+            const yearBE =
+                now.getFullYear() + 543;
+
+            document
+                .getElementById("yearTxt")
+                .innerText =
+                "พ.ศ. " + yearBE;
+
+
+            const grid =
+                document.getElementById(
+                    "mainGrid"
+                );
+
+            grid.innerHTML = "";
+
+
+            for (
+                let month = 0;
+                month < 12;
+                month++
             ) {
 
-              tapCount = 0;
+                const box =
+                    document.createElement(
+                        "div"
+                    );
+
+                box.className =
+                    "month-box";
+
+
+                const title =
+                    document.createElement(
+                        "div"
+                    );
+
+                title.className =
+                    "month-name";
+
+
+                if (
+                    month === now.getMonth()
+                ) {
+
+                    title.classList.add(
+                        "current-month"
+                    );
+
+                }
+
+
+                title.innerText =
+                    months[month];
+
+
+                box.appendChild(
+                    title
+                );
+
+
+                const days =
+                    document.createElement(
+                        "div"
+                    );
+
+                days.className =
+                    "days-grid";
+
+
+                const firstDay =
+                    new Date(
+                        now.getFullYear(),
+                        month,
+                        1
+                    ).getDay();
+
+
+                const totalDays =
+                    new Date(
+                        now.getFullYear(),
+                        month + 1,
+                        0
+                    ).getDate();
+
+
+                for (
+                    let i = 0;
+                    i < firstDay;
+                    i++
+                ) {
+
+                    days.appendChild(
+                        document.createElement(
+                            "div"
+                        )
+                    );
+
+                }
+
+
+                for (
+                    let day = 1;
+                    day <= totalDays;
+                    day++
+                ) {
+
+                    const dayDiv =
+                        document.createElement(
+                            "div"
+                        );
+
+                    dayDiv.className =
+                        "day";
+
+
+                    if (
+                        day === now.getDate() &&
+                        month === now.getMonth()
+                    ) {
+
+                        dayDiv.innerHTML =
+                            '<span class="today-circle">'
+                            + day +
+                            '</span>';
+
+                    } else {
+
+                        dayDiv.innerText =
+                            day;
+
+                    }
+
+
+                    days.appendChild(
+                        dayDiv
+                    );
+
+                }
+
+
+                box.appendChild(
+                    days
+                );
+
+                grid.appendChild(
+                    box
+                );
 
             }
 
-          },
-          TAP_INTERVAL
+        }
+
+
+        /* =========================================
+           GESTURE SYSTEM
+           
+           3 นิ้วแตะพร้อมกัน
+           แล้วแตะ 3 นิ้วอีกครั้ง
+           ภายใน 700ms
+        ========================================= */
+
+        let tapCount = 0;
+
+        let lastThreeFingerTap = 0;
+
+        let resetTimer = null;
+
+        let touchStartTime = 0;
+
+        let validThreeFingerTouch = false;
+
+
+        document.addEventListener(
+            "touchstart",
+            function(event) {
+
+                /*
+                 * ต้องมีนิ้วแตะอยู่ 3 นิ้ว
+                 */
+
+                if (
+                    event.touches.length === 3
+                ) {
+
+                    touchStartTime =
+                        Date.now();
+
+                    validThreeFingerTouch =
+                        true;
+
+                } else {
+
+                    validThreeFingerTouch =
+                        false;
+
+                }
+
+            },
+            {
+                passive: true
+            }
         );
 
-      }
-    );
+
+        document.addEventListener(
+            "touchend",
+            function(event) {
+
+                if (
+                    !validThreeFingerTouch
+                ) {
+                    return;
+                }
 
 
-    /* ==========================================
-       DISABLE CONTEXT MENU
-       ========================================== */
+                /*
+                 * ป้องกันการลาก
+                 * ถ้าจังหวะสัมผัสนานเกินไป
+                 */
 
-    document.addEventListener(
-      "contextmenu",
-      function(event) {
-        event.preventDefault();
-      }
-    );
+                const duration =
+                    Date.now() -
+                    touchStartTime;
 
 
-    /* ==========================================
-       INITIALIZE
-       ========================================== */
+                if (duration > 500) {
 
-    renderCalendar();
+                    validThreeFingerTouch =
+                        false;
 
-  </script>
+                    return;
+
+                }
+
+
+                /*
+                 * ตรวจว่าปล่อยนิ้วครบแล้ว
+                 */
+
+                if (
+                    event.touches.length !== 0
+                ) {
+                    return;
+                }
+
+
+                const now =
+                    Date.now();
+
+
+                /*
+                 * แตะครั้งแรก
+                 */
+
+                if (
+                    now - lastThreeFingerTap
+                    > 700
+                ) {
+
+                    tapCount = 1;
+
+                }
+
+                /*
+                 * แตะครั้งที่สอง
+                 */
+
+                else {
+
+                    tapCount++;
+
+                }
+
+
+                lastThreeFingerTap =
+                    now;
+
+
+                validThreeFingerTouch =
+                    false;
+
+
+                clearTimeout(
+                    resetTimer
+                );
+
+
+                resetTimer =
+                    setTimeout(
+                        function() {
+
+                            tapCount = 0;
+
+                        },
+                        800
+                    );
+
+
+                /*
+                 * ครบ 2 ครั้ง
+                 */
+
+                if (
+                    tapCount >= 2
+                ) {
+
+                    tapCount = 0;
+
+                    clearTimeout(
+                        resetTimer
+                    );
+
+                    openTargetWeb();
+
+                }
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        /* =========================================
+           OPEN WEBSITE
+        ========================================= */
+
+        let opening = false;
+
+
+        function openTargetWeb() {
+
+            if (opening) {
+                return;
+            }
+
+            opening = true;
+
+
+            const status =
+                document.getElementById(
+                    "gestureStatus"
+                );
+
+            const loading =
+                document.getElementById(
+                    "loading"
+                );
+
+
+            status.innerText =
+                "กำลังเปิด VaiperX...";
+
+
+            status.classList.add(
+                "show"
+            );
+
+
+            loading.classList.add(
+                "show"
+            );
+
+
+            /*
+             * ใช้ location.href
+             * เพื่อเปลี่ยนหน้าปัจจุบัน
+             * แทนการสร้างแท็บใหม่
+             */
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        TARGET_URL;
+
+                },
+                250
+            );
+
+        }
+
+
+        /* =========================================
+           INITIALIZE
+        ========================================= */
+
+        renderCalendar();
+
+
+        /* =========================================
+           ป้องกัน Context Menu
+        ========================================= */
+
+        document.addEventListener(
+            "contextmenu",
+            function(event) {
+
+                event.preventDefault();
+
+            },
+            false
+        );
+
+
+        /* =========================================
+           ป้องกันการเลือกข้อความ
+        ========================================= */
+
+        document.addEventListener(
+            "selectstart",
+            function(event) {
+
+                event.preventDefault();
+
+            }
+        );
+
+
+    </script>
 
 </body>
 </html>
