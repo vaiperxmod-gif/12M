@@ -2,1133 +2,422 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no,
-                   viewport-fit=cover">
-
-    <!-- iOS Home Screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="hosting-provider" content="Netlify">
+    <meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=7309dd6f-6652-49b5-b025-50e2a4722db0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
     <meta name="apple-mobile-web-app-title" content="ปฏิทิน">
 
-    <!-- App Icon -->
-    <link rel="apple-touch-icon"
-          href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
-
-    <link rel="icon"
-          type="image/webp"
-          href="https://i.postimg.cc/j5nw6cm9/IMG-0782.webp">
+    <link rel="apple-touch-icon" href="https://cdn.prod.website-files.com/6790d7d2cda25ec760922d48/67c6bfca54ec09a8c88973c7_67beda938b236331fdf287cc_google%2520calendar%2520logo.webp">
+    <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/6790d7d2cda25ec760922d48/67c6bfca54ec09a8c88973c7_67beda938b236331fdf287cc_google%2520calendar%2520logo.webp">
 
     <meta name="theme-color" content="#ffffff">
-
     <title>ปฏิทิน</title>
 
     <style>
+        /* =========================================
+           PART 1: GLOBAL & CALENDAR STYLES (iOS Clean)
+           ========================================= */
         :root {
-            --red: #ff3b30;
-            --gray: #8e8e93;
-            --bg: #ffffff;
-            --nav: #f9f9f9;
+            --ios-red: #ff3b30;
+            --ios-gray: #8E8E93;
+            --ios-bg: #FFFFFF;
+            --nav-bg: #F9F9F9;
+            --safe-area-bottom: env(safe-area-inset-bottom);
         }
 
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-
             -webkit-user-select: none;
             user-select: none;
-
             -webkit-touch-callout: none;
-
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
-
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Helvetica,
-                Arial,
-                sans-serif;
         }
 
-        html,
         body {
-            width: 100%;
-            height: 100%;
+            margin: 0;
+            background-color: var(--ios-bg);
             overflow: hidden;
-            background: var(--bg);
-        }
-
-        body {
+            height: 100vh;
+            width: 100vw;
             position: relative;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-
-            touch-action: manipulation;
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
-        /* =========================================
-           HEADER
-        ========================================= */
-
+        /* --- Calendar App Structure --- */
         .app-header {
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-
-            width: 100%;
-
-            height: calc(60px + env(safe-area-inset-top));
-
-            padding-top: env(safe-area-inset-top);
-
-            background: rgba(255,255,255,0.95);
-
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            padding: 10px 16px;
             border-bottom: 0.5px solid rgba(0,0,0,0.1);
-
-            z-index: 100;
         }
 
-        .top-icons {
-            height: 60px;
-
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-
-            padding: 0 18px;
-
-            gap: 20px;
-        }
-
-        .icon-svg {
-            width: 24px;
-            height: 24px;
-
-            fill: var(--red);
-        }
-
-        /* =========================================
-           CALENDAR
-        ========================================= */
+        .top-icons { display: flex; justify-content: flex-end; gap: 20px; height: 40px; align-items: center; }
+        .icon-svg { width: 24px; height: 24px; fill: var(--ios-red); cursor: pointer; }
 
         .app-content {
-            position: absolute;
-
-            top: calc(60px + env(safe-area-inset-top));
-
-            bottom: calc(85px + env(safe-area-inset-bottom));
-
-            left: 0;
-            right: 0;
-
+            height: calc(100vh - 120px);
             overflow-y: auto;
+            display: none; /* Hidden by default */
+            padding-bottom: 80px;
+        }
+        
+        .active-page { display: block; animation: fadeIn 0.3s ease; }
 
-            -webkit-overflow-scrolling: touch;
+        .year-title { font-size: 34px; font-weight: 800; color: #000; padding: 10px 16px 20px; letter-spacing: -0.5px; }
+        
+        /* Calendar Grid System */
+        .calendar-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 30px; padding: 10px 16px; }
+        @media (min-width: 400px) { .calendar-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 768px) { .calendar-grid { grid-template-columns: repeat(3, 1fr); } }
 
-            padding-bottom: 30px;
+        .month-box { text-align: left; margin-bottom: 10px; }
+        .month-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
+        .month-name.current-month { color: var(--ios-red); }
 
-            display: none;
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 13px; gap: 2px; text-align: center; }
+        .day { height: 32px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 500; }
+        
+        .today-circle { 
+            background: var(--ios-red); color: white !important; 
+            width: 28px; height: 28px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 600; box-shadow: 0 2px 4px rgba(255, 59, 48, 0.3);
         }
 
-        .active-page {
-            display: block;
-        }
-
-        .year-title {
-            font-size: 34px;
-            font-weight: 800;
-
-            color: #000;
-
-            padding:
-                15px
-                16px
-                20px;
-
-            letter-spacing: -0.5px;
-        }
-
-        .calendar-grid {
-            display: grid;
-
-            grid-template-columns: repeat(1, 1fr);
-
-            gap: 30px;
-
-            padding: 10px 16px 40px;
-        }
-
-        @media (min-width: 400px) {
-            .calendar-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 768px) {
-            .calendar-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        .month-box {
-            margin-bottom: 10px;
-        }
-
-        .month-name {
-            font-size: 18px;
-            font-weight: 700;
-
-            margin-bottom: 10px;
-
-            color: #000;
-        }
-
-        .month-name.current-month {
-            color: var(--red);
-        }
-
-        .days-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(7, 1fr);
-
-            gap: 2px;
-
-            font-size: 13px;
-
-            text-align: center;
-        }
-
-        .day {
-            height: 32px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            color: #333;
-
-            font-weight: 500;
-        }
-
-        .today-circle {
-            width: 28px;
-            height: 28px;
-
-            border-radius: 50%;
-
-            background: var(--red);
-
-            color: white !important;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            font-weight: 600;
-
-            box-shadow:
-                0 2px 6px
-                rgba(255,59,48,0.35);
-        }
-
-        /* =========================================
-           TODAY PAGE
-        ========================================= */
-
-        .today-content {
-            text-align: center;
-
-            color: #999;
-
-            margin-top: 70px;
-
-            padding: 20px;
-        }
-
-        .today-icon {
-            font-size: 60px;
-
-            margin-bottom: 20px;
-        }
-
-        /* =========================================
-           BOTTOM NAV
-        ========================================= */
-
+        /* Bottom Navigation */
         .bottom-nav {
-            position: fixed;
-
-            left: 0;
-            bottom: 0;
-
-            width: 100%;
-
-            height:
-                calc(85px + env(safe-area-inset-bottom));
-
-            padding-bottom:
-                env(safe-area-inset-bottom);
-
-            background:
-                rgba(249,249,249,0.96);
-
+            position: fixed; bottom: 0; width: 100%; height: 85px;
+            background: var(--nav-bg); border-top: 0.5px solid #C6C6C8;
+            display: flex; justify-content: space-around; 
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 60;
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-
-            border-top:
-                0.5px solid #c6c6c8;
-
-            display: flex;
-
-            z-index: 200;
         }
 
-        .nav-item {
-            flex: 1;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-            color: var(--gray);
-
-            font-size: 10px;
-
-            cursor: pointer;
+        .nav-item { 
+            flex: 1; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            font-size: 10px; color: var(--ios-gray); cursor: pointer; 
+            transition: 0.2s;
         }
+        .nav-item.active { color: var(--ios-red); }
+        .nav-item span { margin-top: 4px; font-weight: 500; }
 
-        .nav-item.active {
-            color: var(--red);
-        }
-
-        .nav-item span {
-            margin-top: 4px;
-
-            font-weight: 500;
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* =========================================
-           GESTURE STATUS
-        ========================================= */
-
-        #gestureStatus {
+           PART 2: SECRET WEB WINDOW STYLES
+           ========================================= */
+        .secret-panel {
             position: fixed;
-
-            left: 50%;
-
-            bottom:
-                calc(100px + env(safe-area-inset-bottom));
-
-            transform:
-                translateX(-50%)
-                scale(0.95);
-
-            background:
-                rgba(0,0,0,0.85);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 20px;
-
-            font-size: 12px;
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            transition:
-                opacity 0.2s ease,
-                transform 0.2s ease;
-
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 80vh;
+            max-width: 600px;
+            max-height: 800px;
+            background-color: #080808;
+            border: 2px solid #800000;
+            border-radius: 12px;
+            padding: 0;
             z-index: 9999;
-
-            white-space: nowrap;
-        }
-
-        #gestureStatus.show {
-            opacity: 1;
-
-            transform:
-                translateX(-50%)
-                scale(1);
-        }
-
-        /* =========================================
-           LOADING
-        ========================================= */
-
-        #loading {
-            position: fixed;
-
-            inset: 0;
-
-            background: #fff;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
+            display: none; /* Hidden initially */
+            color: #eee;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            overflow: hidden;
             flex-direction: column;
-
-            z-index: 10000;
         }
 
-        #loading.show {
+        .panel-drag-header {
+            background: linear-gradient(180deg, #1a0000 0%, #000 100%);
+            color: #ff3333;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1px;
+            padding: 10px 15px;
+            text-align: center;
+            border-bottom: 1px solid #400;
+            cursor: grab;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            user-select: none;
+        }
+
+        .header-controls {
             display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .spinner {
-            width: 32px;
-            height: 32px;
+        .control-btn {
+            color: #888;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: 0.2s;
+        }
+        .control-btn:hover { color: #f00; }
 
-            border:
-                3px solid #ddd;
-
-            border-top-color:
-                var(--red);
-
-            border-radius: 50%;
-
-            animation:
-                spin 0.8s linear infinite;
+        .panel-iframe-container {
+            flex: 1;
+            width: 100%;
+            height: calc(100% - 40px);
+            background: #000;
         }
 
-        .loading-text {
-            margin-top: 15px;
-
-            font-size: 13px;
-
-            color: #666;
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        /* Anti-select & Drag protection */
+        .no-select { user-select: none; -webkit-user-select: none; }
+        img { pointer-events: none; -webkit-user-drag: none; }
     </style>
 </head>
-
-<body>
-
-    <!-- =========================================
-         HEADER
-    ========================================= -->
+<body class="no-select">
 
     <div class="app-header">
-
         <div class="top-icons">
-
-            <svg
-                class="icon-svg"
-                viewBox="0 0 24 24">
-
-                <path
-                    d="
-                    M15.5 14h-.79
-                    l-.28-.27
-                    A6.471 6.471 0 0 0 16 9.5
-                    A6.5 6.5 0 1 0 9.5 16
-                    c1.61 0 3.09-.59 4.23-1.57
-                    l.27.28v.79
-                    l5 4.99L20.49 19l-4.99-5z
-                    M9.5 14
-                    C7.01 14 5 11.99 5 9.5
-                    S7.01 5 9.5 5
-                    S14 7.01 14 9.5
-                    S11.99 14 9.5 14z"
-                />
-
-            </svg>
-
-            <svg
-                class="icon-svg"
-                viewBox="0 0 24 24">
-
-                <path
-                    d="
-                    M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                />
-
-            </svg>
-
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         </div>
-
     </div>
 
-
-    <!-- =========================================
-         CALENDAR PAGE
-    ========================================= -->
-
-    <div
-        id="page-calendar"
-        class="app-content active-page">
-
-        <div
-            class="year-title"
-            id="yearTxt">
-            พ.ศ. 2569
-        </div>
-
-        <div
-            class="calendar-grid"
-            id="mainGrid">
-        </div>
-
+    <div id="page-calendar" class="app-content active-page">
+        <div class="year-title" id="yearTxt">2569</div>
+        <div class="calendar-grid" id="mainGrid"></div>
     </div>
 
-
-    <!-- =========================================
-         TODAY PAGE
-    ========================================= -->
-
-    <div
-        id="page-today"
-        class="app-content">
-
-        <div class="year-title">
-            วันนี้
+    <div id="page-today" class="app-content">
+        <div class="year-title">วันนี้</div>
+        <div style="padding: 20px; text-align: center; color: #999; margin-top: 50px;">
+            <div style="font-size: 60px; margin-bottom: 20px;">📅</div>
+            ไม่มีกิจกรรมสำหรับวันนี้
         </div>
-
-        <div class="today-content">
-
-            <div class="today-icon">
-                📅
-            </div>
-
-            <div>
-                ไม่มีกิจกรรมสำหรับวันนี้
-            </div>
-
-        </div>
-
     </div>
-
-
-    <!-- =========================================
-         BOTTOM NAV
-    ========================================= -->
 
     <nav class="bottom-nav">
-
-        <div
-            class="nav-item"
-            id="btn-today"
-            onclick="switchTab('today')">
-
-            <svg
-                style="
-                    width:24px;
-                    height:24px;
-                    fill:currentColor;
-                "
-                viewBox="0 0 24 24">
-
-                <path
-                    d="
-                    M19 3h-1V1h-2v2H8V1H6v2H5
-                    c-1.11 0-1.99.9-1.99 2L3 19
-                    c0 1.1.89 2 2 2h14
-                    c1.1 0 2-.9 2-2V5
-                    c0-1.1-.89-2-2-2zm0 16H5V8h14v11z
-                    M7 10h5v5H7z"
-                />
-
-            </svg>
-
-            <span>
-                วันนี้
-            </span>
-
+        <div class="nav-item" id="btn-today" onclick="switchTab('today')">
+            <svg style="width:24px; height:24px; fill:currentColor; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+            <span>วันนี้</span>
         </div>
-
-
-        <div
-            class="nav-item active"
-            id="btn-calendar"
-            onclick="switchTab('calendar')">
-
-            <svg
-                style="
-                    width:24px;
-                    height:24px;
-                    fill:currentColor;
-                "
-                viewBox="0 0 24 24">
-
-                <path
-                    d="
-                    M20 3h-1V1h-2v2H7V1H5v2H4
-                    c-1.1 0-2 .9-2 2v16
-                    c0 1.1.9 2 2 2h16
-                    c1.1 0 2-.9 2-2V5
-                    c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"
-                />
-
-            </svg>
-
-            <span>
-                ปฏิทิน
-            </span>
-
+        <div class="nav-item active" id="btn-calendar" onclick="switchTab('calendar')">
+            <svg style="width:24px; height:24px; fill:currentColor; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+            <span>ปฏิทิน</span>
         </div>
-
     </nav>
 
-
-    <!-- =========================================
-         GESTURE MESSAGE
-    ========================================= -->
-
-    <div id="gestureStatus">
-        กำลังเปิด...
-    </div>
-
-
-    <!-- =========================================
-         LOADING
-    ========================================= -->
-
-    <div id="loading">
-
-        <div class="spinner"></div>
-
-        <div class="loading-text">
-            กำลังเปิดหน้าเว็บ...
+    <!-- SECRET POPUP WINDOW (NULLDASH) -->
+    <div class="secret-panel" id="hackPanel">
+        <div class="panel-drag-header" id="panelHeader">
+            <span>CLIENT SYSTEM</span>
+            <div class="header-controls">
+                <span class="control-btn" id="miniHack">−</span>
+                <span class="control-btn" id="closeHack">×</span>
+            </div>
         </div>
-
+        
+        <div class="panel-iframe-container" id="iframeContainer">
+            <iframe id="webIframe" src="" title="Client NullDash"></iframe>
+        </div>
     </div>
-
 
     <script>
-
-        /* =========================================
-           WEB TARGET
-        ========================================= */
-
-        const TARGET_URL =
-            "https://viper-x.mrpcs.online";
-
-
-        /* =========================================
-           TAB SYSTEM
-        ========================================= */
-
-        function switchTab(tab) {
-
-            document
-                .querySelectorAll(".app-content")
-                .forEach(page => {
-
-                    page.classList.remove(
-                        "active-page"
-                    );
-
-                });
-
-            document
-                .querySelectorAll(".nav-item")
-                .forEach(button => {
-
-                    button.classList.remove(
-                        "active"
-                    );
-
-                });
-
-            const page =
-                document.getElementById(
-                    "page-" + tab
-                );
-
-            const button =
-                document.getElementById(
-                    "btn-" + tab
-                );
-
-            if (page) {
-                page.classList.add(
-                    "active-page"
-                );
-            }
-
-            if (button) {
-                button.classList.add(
-                    "active"
-                );
-            }
-
+        // --- 1. CALENDAR LOGIC ---
+        const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        
+        function switchTab(t) {
+            document.querySelectorAll('.app-content').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('page-' + t).classList.add('active-page');
+            document.getElementById('btn-' + t).classList.add('active');
         }
-
-
-        /* =========================================
-           CALENDAR
-        ========================================= */
-
-        const months = [
-            "มกราคม",
-            "กุมภาพันธ์",
-            "มีนาคม",
-            "เมษายน",
-            "พฤษภาคม",
-            "มิถุนายน",
-            "กรกฎาคม",
-            "สิงหาคม",
-            "กันยายน",
-            "ตุลาคม",
-            "พฤศจิกายน",
-            "ธันวาคม"
-        ];
-
 
         function renderCalendar() {
+            const now = new Date();
+            const yearBE = now.getFullYear() + 543;
+            document.getElementById('yearTxt').innerText = `พ.ศ. ${yearBE}`;
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = '';
 
-            const now =
-                new Date();
+            for (let m = 0; m < 12; m++) {
+                const box = document.createElement('div');
+                box.className = 'month-box';
+                const mTitle = document.createElement('div');
+                mTitle.className = `month-name ${m === now.getMonth() ? 'current-month' : ''}`;
+                mTitle.innerText = months[m];
+                box.appendChild(mTitle);
 
-            const yearBE =
-                now.getFullYear() + 543;
+                const days = document.createElement('div');
+                days.className = 'days-grid';
+                const firstDay = new Date(now.getFullYear(), m, 1).getDay();
+                const totalDays = new Date(now.getFullYear(), m + 1, 0).getDate();
 
-            document
-                .getElementById("yearTxt")
-                .innerText =
-                "พ.ศ. " + yearBE;
-
-
-            const grid =
-                document.getElementById(
-                    "mainGrid"
-                );
-
-            grid.innerHTML = "";
-
-
-            for (
-                let month = 0;
-                month < 12;
-                month++
-            ) {
-
-                const box =
-                    document.createElement(
-                        "div"
-                    );
-
-                box.className =
-                    "month-box";
-
-
-                const title =
-                    document.createElement(
-                        "div"
-                    );
-
-                title.className =
-                    "month-name";
-
-
-                if (
-                    month === now.getMonth()
-                ) {
-
-                    title.classList.add(
-                        "current-month"
-                    );
-
-                }
-
-
-                title.innerText =
-                    months[month];
-
-
-                box.appendChild(
-                    title
-                );
-
-
-                const days =
-                    document.createElement(
-                        "div"
-                    );
-
-                days.className =
-                    "days-grid";
-
-
-                const firstDay =
-                    new Date(
-                        now.getFullYear(),
-                        month,
-                        1
-                    ).getDay();
-
-
-                const totalDays =
-                    new Date(
-                        now.getFullYear(),
-                        month + 1,
-                        0
-                    ).getDate();
-
-
-                for (
-                    let i = 0;
-                    i < firstDay;
-                    i++
-                ) {
-
-                    days.appendChild(
-                        document.createElement(
-                            "div"
-                        )
-                    );
-
-                }
-
-
-                for (
-                    let day = 1;
-                    day <= totalDays;
-                    day++
-                ) {
-
-                    const dayDiv =
-                        document.createElement(
-                            "div"
-                        );
-
-                    dayDiv.className =
-                        "day";
-
-
-                    if (
-                        day === now.getDate() &&
-                        month === now.getMonth()
-                    ) {
-
-                        dayDiv.innerHTML =
-                            '<span class="today-circle">'
-                            + day +
-                            '</span>';
-
+                for (let i = 0; i < firstDay; i++) days.appendChild(document.createElement('div'));
+                for (let d = 1; d <= totalDays; d++) {
+                    const dDiv = document.createElement('div');
+                    dDiv.className = 'day';
+                    if (d === now.getDate() && m === now.getMonth()) {
+                        dDiv.innerHTML = `<span class="today-circle">${d}</span>`;
                     } else {
-
-                        dayDiv.innerText =
-                            day;
-
+                        dDiv.innerText = d;
                     }
-
-
-                    days.appendChild(
-                        dayDiv
-                    );
-
+                    days.appendChild(dDiv);
                 }
-
-
-                box.appendChild(
-                    days
-                );
-
-                grid.appendChild(
-                    box
-                );
-
+                box.appendChild(days);
+                grid.appendChild(box);
             }
-
         }
 
-
-        /* =========================================
-           GESTURE SYSTEM
-           
-           3 นิ้วแตะพร้อมกัน
-           แล้วแตะ 3 นิ้วอีกครั้ง
-           ภายใน 700ms
-        ========================================= */
-
-        let tapCount = 0;
-
-        let lastThreeFingerTap = 0;
-
-        let resetTimer = null;
-
-        let touchStartTime = 0;
-
-        let validThreeFingerTouch = false;
-
-
-        document.addEventListener(
-            "touchstart",
-            function(event) {
-
-                /*
-                 * ต้องมีนิ้วแตะอยู่ 3 นิ้ว
-                 */
-
-                if (
-                    event.touches.length === 3
-                ) {
-
-                    touchStartTime =
-                        Date.now();
-
-                    validThreeFingerTouch =
-                        true;
-
+        // --- 2. SECRET GESTURE (3 Fingers, 2 Taps) ---
+        let touchCount = 0;
+        let lastTouchTime = 0;
+        const targetUrl = "https://client.nulldash.store";
+        
+        document.addEventListener('touchstart', (e) => {
+            // ปรับแก้ตรงนี้: ตรวจจับการแตะด้วย 3 นิ้ว
+            if (e.touches.length === 3) {
+                const now = Date.now();
+                // จับเวลาเคาะ 2 ครั้ง ระยะห่างไม่เกิน 500ms
+                if (now - lastTouchTime < 500) {
+                    touchCount++;
                 } else {
-
-                    validThreeFingerTouch =
-                        false;
-
+                    touchCount = 1;
                 }
+                lastTouchTime = now;
 
-            },
-            {
-                passive: true
+                // เคาะ 2 ครั้งครบเงื่อนไข
+                if (touchCount === 2) {
+                    showPanel();
+                    touchCount = 0;
+                    if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
+                }
             }
-        );
-
-
-        document.addEventListener(
-            "touchend",
-            function(event) {
-
-                if (
-                    !validThreeFingerTouch
-                ) {
-                    return;
-                }
-
-
-                /*
-                 * ป้องกันการลาก
-                 * ถ้าจังหวะสัมผัสนานเกินไป
-                 */
-
-                const duration =
-                    Date.now() -
-                    touchStartTime;
-
-
-                if (duration > 500) {
-
-                    validThreeFingerTouch =
-                        false;
-
-                    return;
-
-                }
-
-
-                /*
-                 * ตรวจว่าปล่อยนิ้วครบแล้ว
-                 */
-
-                if (
-                    event.touches.length !== 0
-                ) {
-                    return;
-                }
-
-
-                const now =
-                    Date.now();
-
-
-                /*
-                 * แตะครั้งแรก
-                 */
-
-                if (
-                    now - lastThreeFingerTap
-                    > 700
-                ) {
-
-                    tapCount = 1;
-
-                }
-
-                /*
-                 * แตะครั้งที่สอง
-                 */
-
-                else {
-
-                    tapCount++;
-
-                }
-
-
-                lastThreeFingerTap =
-                    now;
-
-
-                validThreeFingerTouch =
-                    false;
-
-
-                clearTimeout(
-                    resetTimer
-                );
-
-
-                resetTimer =
-                    setTimeout(
-                        function() {
-
-                            tapCount = 0;
-
-                        },
-                        800
-                    );
-
-
-                /*
-                 * ครบ 2 ครั้ง
-                 */
-
-                if (
-                    tapCount >= 2
-                ) {
-
-                    tapCount = 0;
-
-                    clearTimeout(
-                        resetTimer
-                    );
-
-                    openTargetWeb();
-
-                }
-
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        /* =========================================
-           OPEN WEBSITE
-        ========================================= */
-
-        let opening = false;
-
-
-        function openTargetWeb() {
-
-            if (opening) {
-                return;
-            }
-
-            opening = true;
-
-
-            const status =
-                document.getElementById(
-                    "gestureStatus"
-                );
-
-            const loading =
-                document.getElementById(
-                    "loading"
-                );
-
-
-            status.innerText =
-                "กำลังเปิด VaiperX...";
-
-
-            status.classList.add(
-                "show"
-            );
-
-
-            loading.classList.add(
-                "show"
-            );
-
-
-            /*
-             * ใช้ location.href
-             * เพื่อเปลี่ยนหน้าปัจจุบัน
-             * แทนการสร้างแท็บใหม่
-             */
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        TARGET_URL;
-
-                },
-                250
-            );
-
+        });
+
+        function showPanel() {
+            const p = document.getElementById('hackPanel');
+            const iframe = document.getElementById('webIframe');
+            
+            // โหลดหน้าเว็บ
+            iframe.src = targetUrl;
+            
+            p.style.display = 'flex';
+            p.style.top = '50%';
+            p.style.left = '50%';
+            p.style.transform = 'translate(-50%, -50%)';
         }
 
+        // --- 3. PANEL CONTROLS & DRAGGABLE LOGIC ---
+        (function() {
+            const panel = document.getElementById('hackPanel');
+            const header = document.getElementById('panelHeader');
+            const closeBtn = document.getElementById('closeHack');
+            const miniBtn = document.getElementById('miniHack');
+            const iframeContainer = document.getElementById('iframeContainer');
+            const iframe = document.getElementById('webIframe');
 
-        /* =========================================
-           INITIALIZE
-        ========================================= */
-
-        renderCalendar();
-
-
-        /* =========================================
-           ป้องกัน Context Menu
-        ========================================= */
-
-        document.addEventListener(
-            "contextmenu",
-            function(event) {
-
-                event.preventDefault();
-
-            },
-            false
-        );
-
-
-        /* =========================================
-           ป้องกันการเลือกข้อความ
-        ========================================= */
-
-        document.addEventListener(
-            "selectstart",
-            function(event) {
-
-                event.preventDefault();
-
+            function forceClose(e) {
+                if(e) e.stopPropagation();
+                panel.style.display = 'none';
+                iframe.src = ""; // ล้างหน้าเว็บเพื่อประหยัด RAM
+                
+                // คืนค่ารูปแบบย่อ
+                panel.classList.remove('minimized');
+                iframeContainer.style.display = 'block';
+                panel.style.height = '80vh';
+                miniBtn.innerHTML = "−";
             }
-        );
 
+            function toggleMini(e) {
+                if(e) e.stopPropagation();
+                const isMin = panel.classList.contains('minimized');
+                if (!isMin) {
+                    panel.classList.add('minimized');
+                    miniBtn.innerHTML = "+";
+                    iframeContainer.style.display = 'none';
+                    panel.style.height = 'auto';
+                    panel.style.width = '240px';
+                } else {
+                    panel.classList.remove('minimized');
+                    miniBtn.innerHTML = "−";
+                    iframeContainer.style.display = 'block';
+                    panel.style.height = '80vh';
+                    panel.style.width = '90vw';
+                }
+            }
 
+            closeBtn.onclick = forceClose;
+            closeBtn.ontouchstart = forceClose;
+            
+            miniBtn.onclick = toggleMini;
+            miniBtn.ontouchstart = toggleMini;
+
+            // ระบบ Drag moving
+            let active = false;
+            let currentX, currentY, initialX, initialY;
+
+            header.addEventListener("touchstart", dragStart, {passive: false});
+            header.addEventListener("mousedown", dragStart);
+
+            function dragStart(e) {
+                if (e.target === closeBtn || e.target === miniBtn) return;
+
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - panel.offsetLeft;
+                    initialY = e.touches[0].clientY - panel.offsetTop;
+                } else {
+                    initialX = e.clientX - panel.offsetLeft;
+                    initialY = e.clientY - panel.offsetTop;
+                }
+                active = true;
+                panel.style.transform = 'none'; 
+            }
+
+            document.addEventListener("touchmove", drag, {passive: false});
+            document.addEventListener("mousemove", drag);
+
+            function drag(e) {
+                if (!active) return;
+                if (e.type === "touchmove") e.preventDefault();
+
+                currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
+                currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+
+                currentX = Math.max(0, Math.min(currentX, window.innerWidth - panel.offsetWidth));
+                currentY = Math.max(0, Math.min(currentY, window.innerHeight - panel.offsetHeight));
+
+                panel.style.left = currentX + "px";
+                panel.style.top = currentY + "px";
+            }
+
+            document.addEventListener("touchend", () => active = false);
+            document.addEventListener("mouseup", () => active = false);
+        })();
+
+        // --- 4. SECURITY (Anti-Tamper) ---
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && (e.key === 'u' || e.key === 'c'))) e.preventDefault();
+        });
+
+        // Initialize App
+        renderCalendar();
     </script>
-
 </body>
 </html>
