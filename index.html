@@ -51,7 +51,7 @@ animation:openPanel .25s ease}
 .status-left{display:flex;align-items:center;gap:8px}.status-dot{width:8px;height:8px;border-radius:50%;background:#444;transition:.2s}
 .status-dot.online{background:#ff1616;box-shadow:0 0 8px #f00,0 0 15px rgba(255,0,0,.8);animation:blink 1.4s infinite}
 .status-title{font-size:9px;color:#777;letter-spacing:1px;font-weight:700}.status-value{font-size:10px;font-weight:900;color:#666}.status-value.online{color:#ff2929}
-.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(88vh - 155px);overflow-y:auto}
+.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(88vh - 155px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .panel-body::-webkit-scrollbar{width:3px}.panel-body::-webkit-scrollbar-thumb{background:#550000;border-radius:10px}
 .p-section{background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,0,0,.018));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px;position:relative;overflow:hidden}
 .p-section::after{content:"";position:absolute;top:0;left:0;width:2px;height:100%;background:#e00000;box-shadow:0 0 10px rgba(255,0,0,.6)}
@@ -70,6 +70,27 @@ animation:openPanel .25s ease}
 .p-footer{padding:10px 14px 13px;border-top:1px solid rgba(255,0,0,.16);background:linear-gradient(180deg,#090909,#030303);display:flex;align-items:center;gap:8px}
 .footer-label{font-size:8px;color:#555;letter-spacing:1px}.status-led{flex:1;height:27px;display:flex;align-items:center;justify-content:center;background:#090909;border:1px solid #292929;border-radius:7px;color:#555;font-size:9px;font-weight:800;transition:.2s}
 .status-led.online{color:#ff2525;border-color:#700000;background:rgba(100,0,0,.12);text-shadow:0 0 7px #f00}
+.start-game-btn{
+    display:none;
+    width:100%;
+    min-height:38px;
+    margin-top:8px;
+    border:1px solid #ff2020;
+    border-radius:9px;
+    background:linear-gradient(135deg,#a80000,#320000);
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:1px;
+    cursor:pointer;
+    box-shadow:0 0 14px rgba(255,0,0,.28);
+}
+.start-game-btn.show{display:block}
+.start-game-btn:active{transform:scale(.98)}
+.p-footer.game-ready{flex-wrap:wrap}
+.p-footer.game-ready .footer-label{width:auto}
+.p-footer.game-ready .status-led{min-width:140px}
+
 .secret-panel.minimized{width:205px!important}
 @keyframes openPanel{from{opacity:0;transform:translate(-50%,-50%) scale(.88)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
@@ -196,9 +217,10 @@ img{pointer-events:none;-webkit-user-drag:none}
 
 </div>
 
-<div class="p-footer">
+<div class="p-footer" id="panelFooter">
 <div class="footer-label">VAIPERX</div>
 <div class="status-led" id="statusText">ระบบรอเปิดใช้งาน</div>
+<button class="start-game-btn" id="startGameBtn" type="button">กดเพื่อเริ่มเกม</button>
 </div>
 </div>
 
@@ -290,7 +312,8 @@ const header=document.getElementById("panelHeader");
 let dragging=false,offsetX=0,offsetY=0;
 
 function dragStart(e){
-if(e.target===closeBtn||e.target===miniBtn||e.target.closest(".header-btn"))return;
+if(e.target.closest(".panel-body")||e.target.closest(".p-footer"))return;
+if(e.target===closeBtn||e.target===miniBtn||e.target.closest(".header-btn")||e.target.closest(".start-game-btn"))return;
 const point=e.touches?e.touches[0]:e;
 const rect=panel.getBoundingClientRect();
 offsetX=point.clientX-rect.left;offsetY=point.clientY-rect.top;
@@ -321,6 +344,41 @@ const mainCheckbox=document.getElementById("mainSystem");
 const statusText=document.getElementById("statusText");
 const statusDot=document.getElementById("statusDot");
 const topStatus=document.getElementById("topStatus");
+const startGameBtn=document.getElementById("startGameBtn");
+const panelFooter=document.getElementById("panelFooter");
+
+function showStartGameButton(){
+startGameBtn.classList.add("show");
+panelFooter.classList.add("game-ready");
+}
+
+function hideStartGameButton(){
+startGameBtn.classList.remove("show");
+panelFooter.classList.remove("game-ready");
+}
+
+function startFreeFire(){
+const schemes=["freefire://","freefiremax://"];
+let index=0;
+function tryNext(){
+if(index>=schemes.length)return;
+const scheme=schemes[index++];
+window.location.href=scheme;
+setTimeout(tryNext,900);
+}
+tryNext();
+}
+
+startGameBtn.onclick=function(e){
+e.stopPropagation();
+startGameBtn.innerText="กำลังเปิดเกม...";
+setTimeout(function(){
+startFreeFire();
+setTimeout(function(){
+startGameBtn.innerText="กดเพื่อเริ่มเกม";
+},1800);
+},250);
+};
 
 function updateSystem(state){
 if(state){
@@ -329,6 +387,7 @@ mainButton.innerText="ระบบทำงานอยู่";
 statusText.innerText="ระบบพร้อมใช้งาน";
 statusText.classList.add("online");
 statusDot.classList.add("online");
+showStartGameButton();
 topStatus.innerText="ทำงานอยู่";
 topStatus.classList.add("online");
 }else{
@@ -337,6 +396,7 @@ mainButton.innerText="เปิดใช้งานระบบ";
 statusText.innerText="ระบบรอเปิดใช้งาน";
 statusText.classList.remove("online");
 statusDot.classList.remove("online");
+hideStartGameButton();
 topStatus.innerText="รอเปิดใช้งาน";
 topStatus.classList.remove("online");
 }
