@@ -27,8 +27,8 @@ body{background:#fff;overflow:hidden;position:relative;padding-top:env(safe-area
 .calendar-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:30px;padding:10px 16px}
 @media(min-width:400px){.calendar-grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:768px){.calendar-grid{grid-template-columns:repeat(3,1fr)}}
-.month-box{text-align:left;margin-bottom:10px}.month-name{font-size:18px;font-weight:700;margin-bottom:10px;color:#000}
-.month-name.current-month{color:#ff3b30}.days-grid{display:grid;grid-template-columns:repeat(7,1fr);font-size:13px;gap:2px;text-align:center}
+.month-box{text-align:left;margin-bottom:10px}.month-name{font-size:15px;font-weight:700;margin-bottom:10px;color:#000}
+.month-name.current-month{color:#ff3b30}.days-grid{display:grid;grid-template-columns:repeat(7,1fr);font-size:11px;gap:2px;text-align:center}
 .day{height:32px;display:flex;align-items:center;justify-content:center;color:#333;font-weight:500}
 .today-circle{background:#ff3b30;color:white!important;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .bottom-nav{position:fixed;bottom:0;width:100%;height:calc(85px + env(safe-area-inset-bottom));background:#f9f9f9;border-top:.5px solid #c6c6c8;display:flex;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);z-index:60;backdrop-filter:blur(20px)}
@@ -36,7 +36,7 @@ body{background:#fff;overflow:hidden;position:relative;padding-top:env(safe-area
 .nav-item.active{color:#ff3b30}.nav-item span{margin-top:4px;font-weight:500}
 
 /* VAIPERX MENU */
-.secret-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:390px;max-width:92vw;max-height:88vh;display:none;overflow:hidden;color:#fff;
+.secret-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:390px;max-width:92vw;max-height:82vh;display:none;overflow:hidden;color:#fff;
 background:radial-gradient(circle at 50% -15%,rgba(255,0,0,.28),transparent 43%),linear-gradient(145deg,#1a0000 0%,#090909 42%,#020202 100%);
 border:1px solid rgba(255,0,0,.72);border-radius:18px;z-index:9999;
 box-shadow:0 0 0 1px rgba(255,0,0,.08),0 0 25px rgba(255,0,0,.25),0 25px 70px rgba(0,0,0,.95);
@@ -51,7 +51,7 @@ animation:openPanel .25s ease}
 .status-left{display:flex;align-items:center;gap:8px}.status-dot{width:8px;height:8px;border-radius:50%;background:#444;transition:.2s}
 .status-dot.online{background:#ff1616;box-shadow:0 0 8px #f00,0 0 15px rgba(255,0,0,.8);animation:blink 1.4s infinite}
 .status-title{font-size:9px;color:#777;letter-spacing:1px;font-weight:700}.status-value{font-size:10px;font-weight:900;color:#666}.status-value.online{color:#ff2929}
-.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(88vh - 155px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(82vh - 125px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .panel-body::-webkit-scrollbar{width:3px}.panel-body::-webkit-scrollbar-thumb{background:#550000;border-radius:10px}
 .p-section{background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,0,0,.018));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px;position:relative;overflow:hidden}
 .p-section::after{content:"";position:absolute;top:0;left:0;width:2px;height:100%;background:#e00000;box-shadow:0 0 10px rgba(255,0,0,.6)}
