@@ -51,7 +51,7 @@ animation:openPanel .25s ease}
 .status-left{display:flex;align-items:center;gap:8px}.status-dot{width:8px;height:8px;border-radius:50%;background:#444;transition:.2s}
 .status-dot.online{background:#ff1616;box-shadow:0 0 8px #f00,0 0 15px rgba(255,0,0,.8);animation:blink 1.4s infinite}
 .status-title{font-size:9px;color:#777;letter-spacing:1px;font-weight:700}.status-value{font-size:10px;font-weight:900;color:#666}.status-value.online{color:#ff2929}
-.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(82vh - 125px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(82vh - 125px);overflow-y:scroll;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;min-height:0;flex:1}
 .panel-body::-webkit-scrollbar{width:3px}.panel-body::-webkit-scrollbar-thumb{background:#550000;border-radius:10px}
 .p-section{background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,0,0,.018));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px;position:relative;overflow:hidden}
 .p-section::after{content:"";position:absolute;top:0;left:0;width:2px;height:100%;background:#e00000;box-shadow:0 0 10px rgba(255,0,0,.6)}
@@ -95,6 +95,31 @@ animation:openPanel .25s ease}
 @keyframes openPanel{from{opacity:0;transform:translate(-50%,-50%) scale(.88)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
 img{pointer-events:none;-webkit-user-drag:none}
+
+/* FIX: เมนูเลื่อนขึ้น-ลงได้บนมือถือ */
+.panel-body{
+  overflow-y:scroll !important;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y !important;
+  overscroll-behavior:contain;
+  min-height:0;
+  flex:1 1 auto;
+  scrollbar-width:thin;
+}
+.panel-body *{
+  touch-action:pan-y;
+}
+.panel-body button,
+.panel-body input,
+.panel-body label,
+.panel-body .toggle,
+.panel-body .switch{
+  touch-action:manipulation;
+}
+.p-footer{
+  flex-shrink:0;
+}
 </style>
 </head>
 
