@@ -1,423 +1,357 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="hosting-provider" content="Netlify">
-    <meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=7309dd6f-6652-49b5-b025-50e2a4722db0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <meta name="apple-mobile-web-app-title" content="ปฏิทิน">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="VAIPERX">
+<title>VAIPERX</title>
 
-    <link rel="apple-touch-icon" href="https://cdn.prod.website-files.com/6790d7d2cda25ec760922d48/67c6bfca54ec09a8c88973c7_67beda938b236331fdf287cc_google%2520calendar%2520logo.webp">
-    <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/6790d7d2cda25ec760922d48/67c6bfca54ec09a8c88973c7_67beda938b236331fdf287cc_google%2520calendar%2520logo.webp">
+<style>
+:root{
+--red:#ff1616;--red-dark:#850000;--black:#030303;--black2:#090909;
+--line:rgba(255,0,0,.22);--white:#fff;--gray:#777
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;
+-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+html,body{width:100%;height:100%}
+body{background:#fff;overflow:hidden;position:relative;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.app-header{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(15px);z-index:50;padding:10px 16px;border-bottom:.5px solid rgba(0,0,0,.1)}
+.top-icons{display:flex;justify-content:flex-end;gap:20px;height:40px;align-items:center}
+.icon-svg{width:24px;height:24px;fill:#ff3b30}
+.app-content{height:calc(100vh - 120px);overflow-y:auto;display:none;padding-bottom:80px}
+.active-page{display:block;animation:fadeIn .3s ease}
+.year-title{font-size:34px;font-weight:800;color:#000;padding:10px 16px 20px}
+.calendar-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:30px;padding:10px 16px}
+@media(min-width:400px){.calendar-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:768px){.calendar-grid{grid-template-columns:repeat(3,1fr)}}
+.month-box{text-align:left;margin-bottom:10px}.month-name{font-size:18px;font-weight:700;margin-bottom:10px;color:#000}
+.month-name.current-month{color:#ff3b30}.days-grid{display:grid;grid-template-columns:repeat(7,1fr);font-size:13px;gap:2px;text-align:center}
+.day{height:32px;display:flex;align-items:center;justify-content:center;color:#333;font-weight:500}
+.today-circle{background:#ff3b30;color:white!important;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.bottom-nav{position:fixed;bottom:0;width:100%;height:calc(85px + env(safe-area-inset-bottom));background:#f9f9f9;border-top:.5px solid #c6c6c8;display:flex;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);z-index:60;backdrop-filter:blur(20px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#8e8e93;cursor:pointer}
+.nav-item.active{color:#ff3b30}.nav-item span{margin-top:4px;font-weight:500}
 
-    <meta name="theme-color" content="#ffffff">
-    <title>ปฏิทิน</title>
-
-    <style>
-        /* =========================================
-           PART 1: GLOBAL & CALENDAR STYLES (iOS Clean)
-           ========================================= */
-        :root {
-            --ios-red: #ff3b30;
-            --ios-gray: #8E8E93;
-            --ios-bg: #FFFFFF;
-            --nav-bg: #F9F9F9;
-            --safe-area-bottom: env(safe-area-inset-bottom);
-        }
-
-        * {
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            margin: 0;
-            background-color: var(--ios-bg);
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
-
-        /* --- Calendar App Structure --- */
-        .app-header {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 50;
-            padding: 10px 16px;
-            border-bottom: 0.5px solid rgba(0,0,0,0.1);
-        }
-
-        .top-icons { display: flex; justify-content: flex-end; gap: 20px; height: 40px; align-items: center; }
-        .icon-svg { width: 24px; height: 24px; fill: var(--ios-red); cursor: pointer; }
-
-        .app-content {
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-            display: none; /* Hidden by default */
-            padding-bottom: 80px;
-        }
-        
-        .active-page { display: block; animation: fadeIn 0.3s ease; }
-
-        .year-title { font-size: 34px; font-weight: 800; color: #000; padding: 10px 16px 20px; letter-spacing: -0.5px; }
-        
-        /* Calendar Grid System */
-        .calendar-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 30px; padding: 10px 16px; }
-        @media (min-width: 400px) { .calendar-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 768px) { .calendar-grid { grid-template-columns: repeat(3, 1fr); } }
-
-        .month-box { text-align: left; margin-bottom: 10px; }
-        .month-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
-        .month-name.current-month { color: var(--ios-red); }
-
-        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 13px; gap: 2px; text-align: center; }
-        .day { height: 32px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 500; }
-        
-        .today-circle { 
-            background: var(--ios-red); color: white !important; 
-            width: 28px; height: 28px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 600; box-shadow: 0 2px 4px rgba(255, 59, 48, 0.3);
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 85px;
-            background: var(--nav-bg); border-top: 0.5px solid #C6C6C8;
-            display: flex; justify-content: space-around; 
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 60;
-            backdrop-filter: blur(20px);
-        }
-
-        .nav-item { 
-            flex: 1; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; 
-            font-size: 10px; color: var(--ios-gray); cursor: pointer; 
-            transition: 0.2s;
-        }
-        .nav-item.active { color: var(--ios-red); }
-        .nav-item span { margin-top: 4px; font-weight: 500; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* =========================================
-           PART 2: SECRET WEB WINDOW STYLES
-           ========================================= */
-        .secret-panel {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90vw;
-            height: 80vh;
-            max-width: 600px;
-            max-height: 800px;
-            background-color: #080808;
-            border: 2px solid #800000;
-            border-radius: 12px;
-            padding: 0;
-            z-index: 9999;
-            display: none; /* Hidden initially */
-            color: #eee;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            overflow: hidden;
-            flex-direction: column;
-        }
-
-        .panel-drag-header {
-            background: linear-gradient(180deg, #1a0000 0%, #000 100%);
-            color: #ff3333;
-            font-weight: 900;
-            font-size: 14px;
-            letter-spacing: 1px;
-            padding: 10px 15px;
-            text-align: center;
-            border-bottom: 1px solid #400;
-            cursor: grab;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            user-select: none;
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .control-btn {
-            color: #888;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-            transition: 0.2s;
-        }
-        .control-btn:hover { color: #f00; }
-
-        .panel-iframe-container {
-            flex: 1;
-            width: 100%;
-            height: calc(100% - 40px);
-            background: #000;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #ffffff;
-        }
-
-        /* Anti-select & Drag protection */
-        .no-select { user-select: none; -webkit-user-select: none; }
-        img { pointer-events: none; -webkit-user-drag: none; }
-    </style>
+/* VAIPERX MENU */
+.secret-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:390px;max-width:92vw;max-height:88vh;display:none;overflow:hidden;color:#fff;
+background:radial-gradient(circle at 50% -15%,rgba(255,0,0,.28),transparent 43%),linear-gradient(145deg,#1a0000 0%,#090909 42%,#020202 100%);
+border:1px solid rgba(255,0,0,.72);border-radius:18px;z-index:9999;
+box-shadow:0 0 0 1px rgba(255,0,0,.08),0 0 25px rgba(255,0,0,.25),0 25px 70px rgba(0,0,0,.95);
+animation:openPanel .25s ease}
+.secret-panel::before{content:"";position:absolute;top:0;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,#f00,#ff5a5a,#f00,transparent);box-shadow:0 0 12px #f00,0 0 25px rgba(255,0,0,.8);z-index:5}
+.panel-drag-header{height:72px;padding:12px 15px;background:linear-gradient(135deg,rgba(255,0,0,.18),rgba(10,10,10,.96));border-bottom:1px solid rgba(255,0,0,.25);display:flex;align-items:center;justify-content:space-between;cursor:grab;position:relative}
+.vaiper-logo{display:flex;flex-direction:column;line-height:1}.vaiper-logo-main{font-size:25px;font-weight:950;font-style:italic;letter-spacing:2px;color:#fff;text-shadow:2px 2px 0 #500000,0 0 8px rgba(255,0,0,.8),0 0 20px rgba(255,0,0,.4)}
+.vaiper-logo-main span{color:#ff1616}.vaiper-logo-sub{margin-top:5px;font-size:8px;letter-spacing:2px;color:#777;font-weight:700}
+.header-actions{display:flex;align-items:center;gap:7px}.header-btn{width:31px;height:31px;border-radius:8px;border:1px solid #333;background:#101010;color:#aaa;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:.2s}
+.header-btn:hover{color:#fff;border-color:#f00;box-shadow:0 0 10px rgba(255,0,0,.3)}.close-btn:hover{background:#800000;color:#fff}
+.panel-status{margin:12px 14px 4px;padding:10px 12px;border:1px solid rgba(255,0,0,.22);background:linear-gradient(90deg,rgba(255,0,0,.10),rgba(255,0,0,.025));border-radius:10px;display:flex;align-items:center;justify-content:space-between}
+.status-left{display:flex;align-items:center;gap:8px}.status-dot{width:8px;height:8px;border-radius:50%;background:#444;transition:.2s}
+.status-dot.online{background:#ff1616;box-shadow:0 0 8px #f00,0 0 15px rgba(255,0,0,.8);animation:blink 1.4s infinite}
+.status-title{font-size:9px;color:#777;letter-spacing:1px;font-weight:700}.status-value{font-size:10px;font-weight:900;color:#666}.status-value.online{color:#ff2929}
+.panel-body{padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(88vh - 155px);overflow-y:auto}
+.panel-body::-webkit-scrollbar{width:3px}.panel-body::-webkit-scrollbar-thumb{background:#550000;border-radius:10px}
+.p-section{background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,0,0,.018));border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px;position:relative;overflow:hidden}
+.p-section::after{content:"";position:absolute;top:0;left:0;width:2px;height:100%;background:#e00000;box-shadow:0 0 10px rgba(255,0,0,.6)}
+.p-section-title{display:flex;align-items:center;gap:7px;color:#ff3333;font-size:10px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px}
+.p-section-title::before{content:"";width:6px;height:6px;background:#ff1717;transform:rotate(45deg);box-shadow:0 0 7px #f00}
+.p-row{min-height:45px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid rgba(255,255,255,.035);color:#ddd;font-size:12px}
+.p-row:first-of-type{border-top:0}.row-info{display:flex;flex-direction:column;gap:3px}.row-name{font-weight:700;color:#ddd}.row-desc{font-size:8px;color:#555}
+.switch{position:relative;width:42px;height:23px;flex-shrink:0}.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#171717;border:1px solid #333;border-radius:30px;cursor:pointer;transition:.25s}
+.slider::before{content:"";position:absolute;width:17px;height:17px;left:2px;top:2px;background:#777;border-radius:50%;transition:.25s;box-shadow:0 2px 5px #000}
+.switch input:checked+.slider{background:linear-gradient(90deg,#730000,#e00000);border-color:#ff2222;box-shadow:0 0 8px rgba(255,0,0,.45)}
+.switch input:checked+.slider::before{transform:translateX(19px);background:#fff;box-shadow:0 0 8px #fff,0 0 12px #f00}
+.main-toggle{width:100%;margin-top:3px;height:48px;border:1px solid #780000;border-radius:11px;background:linear-gradient(135deg,#280000,#090909);color:#fff;font-size:12px;font-weight:950;letter-spacing:1.5px;cursor:pointer;box-shadow:inset 0 0 15px rgba(255,0,0,.08),0 0 15px rgba(255,0,0,.08);transition:.2s}
+.main-toggle.active{background:linear-gradient(135deg,#9b0000,#260000);border-color:#ff3030;box-shadow:0 0 15px rgba(255,0,0,.4),inset 0 0 15px rgba(255,0,0,.2)}
+.main-toggle:active{transform:scale(.98)}
+.p-footer{padding:10px 14px 13px;border-top:1px solid rgba(255,0,0,.16);background:linear-gradient(180deg,#090909,#030303);display:flex;align-items:center;gap:8px}
+.footer-label{font-size:8px;color:#555;letter-spacing:1px}.status-led{flex:1;height:27px;display:flex;align-items:center;justify-content:center;background:#090909;border:1px solid #292929;border-radius:7px;color:#555;font-size:9px;font-weight:800;transition:.2s}
+.status-led.online{color:#ff2525;border-color:#700000;background:rgba(100,0,0,.12);text-shadow:0 0 7px #f00}
+.secret-panel.minimized{width:205px!important}
+@keyframes openPanel{from{opacity:0;transform:translate(-50%,-50%) scale(.88)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+img{pointer-events:none;-webkit-user-drag:none}
+</style>
 </head>
+
 <body class="no-select">
 
-    <div class="app-header">
-        <div class="top-icons">
-            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        </div>
-    </div>
+<div class="app-header">
+<div class="top-icons">
+<svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5a6.5 6.5 0 1 0-6.5 6.5c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+<svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+</div>
+</div>
 
-    <div id="page-calendar" class="app-content active-page">
-        <div class="year-title" id="yearTxt">2569</div>
-        <div class="calendar-grid" id="mainGrid"></div>
-    </div>
+<div id="page-calendar" class="app-content active-page">
+<div class="year-title" id="yearTxt">2569</div>
+<div class="calendar-grid" id="mainGrid"></div>
+</div>
 
-    <div id="page-today" class="app-content">
-        <div class="year-title">วันนี้</div>
-        <div style="padding: 20px; text-align: center; color: #999; margin-top: 50px;">
-            <div style="font-size: 60px; margin-bottom: 20px;">📅</div>
-            ไม่มีกิจกรรมสำหรับวันนี้
-        </div>
-    </div>
+<div id="page-today" class="app-content">
+<div class="year-title">วันนี้</div>
+<div style="padding:20px;text-align:center;color:#999;margin-top:50px">
+<div style="font-size:60px;margin-bottom:20px">📅</div>
+ไม่มีกิจกรรมสำหรับวันนี้
+</div>
+</div>
 
-    <nav class="bottom-nav">
-        <div class="nav-item" id="btn-today" onclick="switchTab('today')">
-            <svg style="width:24px; height:24px; fill:currentColor; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-            <span>วันนี้</span>
-        </div>
-        <div class="nav-item active" id="btn-calendar" onclick="switchTab('calendar')">
-            <svg style="width:24px; height:24px; fill:currentColor; margin-bottom:2px;" viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
-            <span>ปฏิทิน</span>
-        </div>
-    </nav>
+<nav class="bottom-nav">
+<div class="nav-item" id="btn-today" onclick="switchTab('today')">
+<svg style="width:24px;height:24px;fill:currentColor;margin-bottom:2px" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+<span>วันนี้</span>
+</div>
+<div class="nav-item active" id="btn-calendar" onclick="switchTab('calendar')">
+<svg style="width:24px;height:24px;fill:currentColor;margin-bottom:2px" viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
+<span>ปฏิทิน</span>
+</div>
+</nav>
 
-    <!-- SECRET POPUP WINDOW (NULLDASH) -->
-    <div class="secret-panel" id="hackPanel">
-        <div class="panel-drag-header" id="panelHeader">
-            <span>CLIENT SYSTEM</span>
-            <div class="header-controls">
-                <span class="control-btn" id="miniHack">−</span>
-                <span class="control-btn" id="closeHack">×</span>
-            </div>
-        </div>
-        
-        <div class="panel-iframe-container" id="iframeContainer">
-            <iframe id="webIframe" src="" title="Client NullDash"></iframe>
-        </div>
-    </div>
+<div class="secret-panel" id="hackPanel">
 
-    <script>
-        // --- 1. CALENDAR LOGIC ---
-        const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-        
-        function switchTab(t) {
-            document.querySelectorAll('.app-content').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.getElementById('page-' + t).classList.add('active-page');
-            document.getElementById('btn-' + t).classList.add('active');
-        }
+<div class="panel-drag-header" id="panelHeader">
+<div class="vaiper-logo">
+<div class="vaiper-logo-main">VAIPER<span>X</span></div>
+<div class="vaiper-logo-sub">เมนูควบคุม VAIPERX</div>
+</div>
+<div class="header-actions">
+<div class="header-btn" id="miniHack">−</div>
+<div class="header-btn close-btn" id="closeHack">×</div>
+</div>
+</div>
 
-        function renderCalendar() {
-            const now = new Date();
-            const yearBE = now.getFullYear() + 543;
-            document.getElementById('yearTxt').innerText = `พ.ศ. ${yearBE}`;
-            const grid = document.getElementById('mainGrid');
-            grid.innerHTML = '';
+<div class="panel-status">
+<div class="status-left">
+<div class="status-dot" id="statusDot"></div>
+<div class="status-title">สถานะระบบ</div>
+</div>
+<div class="status-value" id="topStatus">รอเปิดใช้งาน</div>
+</div>
 
-            for (let m = 0; m < 12; m++) {
-                const box = document.createElement('div');
-                box.className = 'month-box';
-                const mTitle = document.createElement('div');
-                mTitle.className = `month-name ${m === now.getMonth() ? 'current-month' : ''}`;
-                mTitle.innerText = months[m];
-                box.appendChild(mTitle);
+<div class="panel-body">
 
-                const days = document.createElement('div');
-                days.className = 'days-grid';
-                const firstDay = new Date(now.getFullYear(), m, 1).getDay();
-                const totalDays = new Date(now.getFullYear(), m + 1, 0).getDate();
+<div class="p-section">
+<div class="p-section-title">ระบบหลัก</div>
+<div class="p-row">
+<div class="row-info"><div class="row-name">เปิดใช้งานระบบ</div><div class="row-desc">ควบคุมระบบหลัก</div></div>
+<label class="switch"><input type="checkbox" id="mainSystem"><span class="slider"></span></label>
+</div>
+<button class="main-toggle" id="btnAimbot">เปิดใช้งานระบบ</button>
+</div>
 
-                for (let i = 0; i < firstDay; i++) days.appendChild(document.createElement('div'));
-                for (let d = 1; d <= totalDays; d++) {
-                    const dDiv = document.createElement('div');
-                    dDiv.className = 'day';
-                    if (d === now.getDate() && m === now.getMonth()) {
-                        dDiv.innerHTML = `<span class="today-circle">${d}</span>`;
-                    } else {
-                        dDiv.innerText = d;
-                    }
-                    days.appendChild(dDiv);
-                }
-                box.appendChild(days);
-                grid.appendChild(box);
-            }
-        }
+<div class="p-section">
+<div class="p-section-title">ระบบช่วยเล็ง</div>
 
-        // --- 2. SECRET GESTURE (3 Fingers, 2 Taps) ---
-        let touchCount = 0;
-        let lastTouchTime = 0;
-        const targetUrl = "https://client.nulldash.store";
-        
-        document.addEventListener('touchstart', (e) => {
-            // ปรับแก้ตรงนี้: ตรวจจับการแตะด้วย 3 นิ้ว
-            if (e.touches.length === 3) {
-                const now = Date.now();
-                // จับเวลาเคาะ 2 ครั้ง ระยะห่างไม่เกิน 500ms
-                if (now - lastTouchTime < 500) {
-                    touchCount++;
-                } else {
-                    touchCount = 1;
-                }
-                lastTouchTime = now;
+<div class="p-row">
+<div class="row-info"><div class="row-name">ช่วยเล็ง</div><div class="row-desc">ปรับความแม่นยำ</div></div>
+<label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+</div>
 
-                // เคาะ 2 ครั้งครบเงื่อนไข
-                if (touchCount === 2) {
-                    showPanel();
-                    touchCount = 0;
-                    if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                }
-            }
-        });
+<div class="p-row">
+<div class="row-info"><div class="row-name">เน้นเป้าหมาย</div><div class="row-desc">จัดลำดับเป้าหมาย</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
 
-        function showPanel() {
-            const p = document.getElementById('hackPanel');
-            const iframe = document.getElementById('webIframe');
-            
-            // โหลดหน้าเว็บ
-            iframe.src = targetUrl;
-            
-            p.style.display = 'flex';
-            p.style.top = '50%';
-            p.style.left = '50%';
-            p.style.transform = 'translate(-50%, -50%)';
-        }
+<div class="p-row">
+<div class="row-info"><div class="row-name">ควบคุมแรงดีด</div><div class="row-desc">ช่วยให้การควบคุมเสถียร</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
+</div>
 
-        // --- 3. PANEL CONTROLS & DRAGGABLE LOGIC ---
-        (function() {
-            const panel = document.getElementById('hackPanel');
-            const header = document.getElementById('panelHeader');
-            const closeBtn = document.getElementById('closeHack');
-            const miniBtn = document.getElementById('miniHack');
-            const iframeContainer = document.getElementById('iframeContainer');
-            const iframe = document.getElementById('webIframe');
+<div class="p-section">
+<div class="p-section-title">การแสดงผล</div>
 
-            function forceClose(e) {
-                if(e) e.stopPropagation();
-                panel.style.display = 'none';
-                iframe.src = ""; // ล้างหน้าเว็บเพื่อประหยัด RAM
-                
-                // คืนค่ารูปแบบย่อ
-                panel.classList.remove('minimized');
-                iframeContainer.style.display = 'block';
-                panel.style.height = '80vh';
-                miniBtn.innerHTML = "−";
-            }
+<div class="p-row">
+<div class="row-info"><div class="row-name">ทัชไว</div><div class="row-desc">เพิ่มการตอบสนองหน้าจอ</div></div>
+<label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+</div>
 
-            function toggleMini(e) {
-                if(e) e.stopPropagation();
-                const isMin = panel.classList.contains('minimized');
-                if (!isMin) {
-                    panel.classList.add('minimized');
-                    miniBtn.innerHTML = "+";
-                    iframeContainer.style.display = 'none';
-                    panel.style.height = 'auto';
-                    panel.style.width = '240px';
-                } else {
-                    panel.classList.remove('minimized');
-                    miniBtn.innerHTML = "−";
-                    iframeContainer.style.display = 'block';
-                    panel.style.height = '80vh';
-                    panel.style.width = '90vw';
-                }
-            }
+<div class="p-row">
+<div class="row-info"><div class="row-name">โหมดลื่น</div><div class="row-desc">ปรับการทำงานให้ลื่นขึ้น</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
 
-            closeBtn.onclick = forceClose;
-            closeBtn.ontouchstart = forceClose;
-            
-            miniBtn.onclick = toggleMini;
-            miniBtn.ontouchstart = toggleMini;
+<div class="p-row">
+<div class="row-info"><div class="row-name">เพิ่มประสิทธิภาพเฟรม</div><div class="row-desc">ปรับประสิทธิภาพการแสดงผล</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
+</div>
 
-            // ระบบ Drag moving
-            let active = false;
-            let currentX, currentY, initialX, initialY;
+<div class="p-section">
+<div class="p-section-title">ระบบเพิ่มเติม</div>
 
-            header.addEventListener("touchstart", dragStart, {passive: false});
-            header.addEventListener("mousedown", dragStart);
+<div class="p-row">
+<div class="row-info"><div class="row-name">ระบบอัตโนมัติ</div><div class="row-desc">ทำงานอัตโนมัติ</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
 
-            function dragStart(e) {
-                if (e.target === closeBtn || e.target === miniBtn) return;
+<div class="p-row">
+<div class="row-info"><div class="row-name">โหมดเสถียร</div><div class="row-desc">เน้นความเสถียรของระบบ</div></div>
+<label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
+</div>
 
-                if (e.type === "touchstart") {
-                    initialX = e.touches[0].clientX - panel.offsetLeft;
-                    initialY = e.touches[0].clientY - panel.offsetTop;
-                } else {
-                    initialX = e.clientX - panel.offsetLeft;
-                    initialY = e.clientY - panel.offsetTop;
-                }
-                active = true;
-                panel.style.transform = 'none'; 
-            }
+</div>
 
-            document.addEventListener("touchmove", drag, {passive: false});
-            document.addEventListener("mousemove", drag);
+<div class="p-footer">
+<div class="footer-label">VAIPERX</div>
+<div class="status-led" id="statusText">ระบบรอเปิดใช้งาน</div>
+</div>
+</div>
 
-            function drag(e) {
-                if (!active) return;
-                if (e.type === "touchmove") e.preventDefault();
+<script>
+const months=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 
-                currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
-                currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+function switchTab(t){
+document.querySelectorAll(".app-content").forEach(p=>p.classList.remove("active-page"));
+document.querySelectorAll(".nav-item").forEach(b=>b.classList.remove("active"));
+document.getElementById("page-"+t).classList.add("active-page");
+document.getElementById("btn-"+t).classList.add("active");
+}
 
-                currentX = Math.max(0, Math.min(currentX, window.innerWidth - panel.offsetWidth));
-                currentY = Math.max(0, Math.min(currentY, window.innerHeight - panel.offsetHeight));
+function renderCalendar(){
+const now=new Date();
+document.getElementById("yearTxt").innerText="พ.ศ. "+(now.getFullYear()+543);
+const grid=document.getElementById("mainGrid");
+grid.innerHTML="";
+for(let m=0;m<12;m++){
+const box=document.createElement("div");box.className="month-box";
+const title=document.createElement("div");
+title.className="month-name "+(m===now.getMonth()?"current-month":"");
+title.innerText=months[m];box.appendChild(title);
+const days=document.createElement("div");days.className="days-grid";
+const firstDay=new Date(now.getFullYear(),m,1).getDay();
+const totalDays=new Date(now.getFullYear(),m+1,0).getDate();
+for(let i=0;i<firstDay;i++)days.appendChild(document.createElement("div"));
+for(let d=1;d<=totalDays;d++){
+const day=document.createElement("div");day.className="day";
+if(d===now.getDate()&&m===now.getMonth())day.innerHTML='<span class="today-circle">'+d+"</span>";
+else day.innerText=d;
+days.appendChild(day);
+}
+box.appendChild(days);grid.appendChild(box);
+}
+}
 
-                panel.style.left = currentX + "px";
-                panel.style.top = currentY + "px";
-            }
+/* 2 นิ้ว + แตะ 3 ครั้ง */
+let touchCount=0,lastTouchTime=0;
+document.addEventListener("touchstart",function(e){
+if(e.touches.length===2){
+const now=Date.now();
+if(now-lastTouchTime<500)touchCount++;
+else touchCount=1;
+lastTouchTime=now;
+if(touchCount===3){
+showPanel();touchCount=0;
+if(navigator.vibrate)navigator.vibrate([50,50,50]);
+}
+}
+},{passive:true});
 
-            document.addEventListener("touchend", () => active = false);
-            document.addEventListener("mouseup", () => active = false);
-        })();
+function showPanel(){
+const p=document.getElementById("hackPanel");
+p.style.display="block";p.style.top="50%";p.style.left="50%";
+p.style.transform="translate(-50%,-50%)";
+}
 
-        // --- 4. SECURITY (Anti-Tamper) ---
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && (e.key === 'u' || e.key === 'c'))) e.preventDefault();
-        });
+const panel=document.getElementById("hackPanel");
+const closeBtn=document.getElementById("closeHack");
 
-        // Initialize App
-        renderCalendar();
-    </script>
+closeBtn.onclick=function(e){
+e.stopPropagation();panel.style.display="none";
+panel.classList.remove("minimized");
+panel.querySelector(".panel-body").style.display="flex";
+panel.querySelector(".p-footer").style.display="flex";
+panel.style.width="";
+};
+
+const miniBtn=document.getElementById("miniHack");
+miniBtn.onclick=function(e){
+e.stopPropagation();
+const minimized=panel.classList.contains("minimized");
+if(!minimized){
+panel.classList.add("minimized");miniBtn.innerHTML="+";
+panel.querySelector(".panel-body").style.display="none";
+panel.querySelector(".p-footer").style.display="none";
+panel.style.width="205px";
+}else{
+panel.classList.remove("minimized");miniBtn.innerHTML="−";
+panel.querySelector(".panel-body").style.display="flex";
+panel.querySelector(".p-footer").style.display="flex";
+panel.style.width="";
+}
+};
+
+/* ลากเมนู */
+const header=document.getElementById("panelHeader");
+let dragging=false,offsetX=0,offsetY=0;
+
+function dragStart(e){
+if(e.target===closeBtn||e.target===miniBtn||e.target.closest(".header-btn"))return;
+const point=e.touches?e.touches[0]:e;
+const rect=panel.getBoundingClientRect();
+offsetX=point.clientX-rect.left;offsetY=point.clientY-rect.top;
+dragging=true;panel.style.transform="none";
+if(e.cancelable)e.preventDefault();
+}
+function dragMove(e){
+if(!dragging)return;
+const point=e.touches?e.touches[0]:e;
+let x=point.clientX-offsetX,y=point.clientY-offsetY;
+x=Math.max(0,Math.min(x,window.innerWidth-panel.offsetWidth));
+y=Math.max(0,Math.min(y,window.innerHeight-panel.offsetHeight));
+panel.style.left=x+"px";panel.style.top=y+"px";
+if(e.cancelable&&e.touches)e.preventDefault();
+}
+function dragEnd(){dragging=false}
+
+header.addEventListener("mousedown",dragStart);
+document.addEventListener("mousemove",dragMove);
+document.addEventListener("mouseup",dragEnd);
+header.addEventListener("touchstart",dragStart,{passive:false});
+document.addEventListener("touchmove",dragMove,{passive:false});
+document.addEventListener("touchend",dragEnd);
+
+/* ระบบหลัก */
+const mainButton=document.getElementById("btnAimbot");
+const mainCheckbox=document.getElementById("mainSystem");
+const statusText=document.getElementById("statusText");
+const statusDot=document.getElementById("statusDot");
+const topStatus=document.getElementById("topStatus");
+
+function updateSystem(state){
+if(state){
+mainButton.classList.add("active");
+mainButton.innerText="ระบบทำงานอยู่";
+statusText.innerText="ระบบพร้อมใช้งาน";
+statusText.classList.add("online");
+statusDot.classList.add("online");
+topStatus.innerText="ทำงานอยู่";
+topStatus.classList.add("online");
+}else{
+mainButton.classList.remove("active");
+mainButton.innerText="เปิดใช้งานระบบ";
+statusText.innerText="ระบบรอเปิดใช้งาน";
+statusText.classList.remove("online");
+statusDot.classList.remove("online");
+topStatus.innerText="รอเปิดใช้งาน";
+topStatus.classList.remove("online");
+}
+}
+
+mainButton.onclick=function(){
+mainCheckbox.checked=!mainCheckbox.checked;
+updateSystem(mainCheckbox.checked);
+};
+mainCheckbox.onchange=function(){updateSystem(this.checked)};
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+renderCalendar();
+</script>
+
 </body>
 </html>
